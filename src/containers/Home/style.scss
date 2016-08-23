@@ -8,7 +8,7 @@
   height: 30vh;
   color: #fff;
 
-  @media(max-width: $screen-sm){
+  @include mobile() {
     height: 50vh;
     padding: 1px;
   }
@@ -20,7 +20,7 @@
 }
 
 .header__text {
-  @media (max-width: $screen-sm) {
+  @include mobile() {
     margin-top: 15%;
   }
 }
