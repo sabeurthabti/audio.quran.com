@@ -6,9 +6,10 @@ import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
 import Nav from 'react-bootstrap/lib/Nav';
 import NavItem from 'react-bootstrap/lib/NavItem';
-
+import randomcolor from 'randomcolor';
 const styles = require('./style.scss');
-const images = Array(33).join(',').split(',').map((__, index) => require(`../../../static/images/background/compressed/${index + 1}.jpeg`));
+// const images = Array(33).join(',').split(',').map((__, index) => require(`../../../static/images/background/compressed/${index + 1}.jpeg`));
+// const colors = () => ('#' + ('000000' + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6));
 
 @connect(
   state => ({
@@ -63,17 +64,20 @@ export default class Home extends Component {
             <Col md={12}>
               <Row>
                 {
-                  Object.values(qaris).filter(qari => qari.sectionId === section).sort((prev, next) => next.name > prev.name ? -1 : 1).map(qari => (
+                  Object.values(qaris).filter(qari => qari.sectionId === section).sort((prev, next) => next.name > prev.name ? -1 : 1).map(qari => {
+                    const generatedColor = randomcolor({ luminosity: 'light'});
+                    return (
                     <Col md={3} key={qari.id}>
                       <Link
                         className={styles.reciter}
                         to={`/quran/${qari.id}`}
-                        style={{background: `url(${images[qari.id % images.length]}) center center no-repeat`, backgroundSize: 'cover'}}>
+                        style={{background: generatedColor}}>
                         <div className={styles.overlay} />
                         <div className={styles.text}>{qari.name}</div>
                       </Link>
                     </Col>
-                  ))
+                  );}
+                )
                 }
               </Row>
             </Col>

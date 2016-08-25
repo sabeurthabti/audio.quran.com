@@ -118,6 +118,7 @@
     "pg": "^6.0.3",
     "piping": "^0.3.0",
     "pretty-error": "^1.2.0",
+    "randomcolor": "^0.4.4",
     "react": "^0.14.8",
     "react-bootstrap": "^0.28.1",
     "react-dom": "^0.14.8",
