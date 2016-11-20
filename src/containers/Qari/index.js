@@ -49,7 +49,6 @@ class Qaris extends Component {
   render() {
     const { surahs, qari, files, currentSurah, Playing, shouldContinuous, related, qaris} = this.props;
     const { toggleRelated} = this.state;
-    console.log(this.state);
     const handlePlayAll = () => {
       this.props.continuous();
       if (!shouldContinuous) {
@@ -79,7 +78,7 @@ class Qaris extends Component {
                   >
                   <i className={`fa ${shouldContinuous ? 'fa-stop' : 'fa-play'} ${styles.icon}`} /><span>Play All</span>
                 </Button>
-                 {related && (
+                 {related.length > 0 && (
                  <Button
                   bsStyle="primary"
                   className={`${styles.button} ${this.state.toggleRelated ? styles.playAllActive : ''}`}
