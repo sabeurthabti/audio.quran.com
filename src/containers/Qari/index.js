@@ -8,17 +8,20 @@ import Button from 'react-bootstrap/lib/Button';
 import Helmet from 'react-helmet';
 import { load, play, next, continuous} from 'actions/audioplayer';
 import { load as loadFiles } from 'actions/files';
+import { load as loadRelated } from 'actions/related';
 import zeroPad from 'utils/zeroPad';
 import formatSeconds from 'utils/formatSeconds';
 import Link from 'react-router/lib/Link';
-
+import Related from 'components/Related';
 const styles = require('./style.scss');
 
 class Qaris extends Component {
   static propTypes = {
     surahs: PropTypes.object.isRequired,
+    qaris: PropTypes.any.isRequired,
     qari: PropTypes.object.isRequired,
     files: PropTypes.object.isRequired,
+    related: PropTypes.array.isRequired,
     load: PropTypes.func.isRequired,
     play: PropTypes.func.isRequired,
     currentSurah: PropTypes.any,
@@ -28,6 +31,8 @@ class Qaris extends Component {
     Playing: PropTypes.bool.isRequired
   };
 
+  state = { toggleRelated: false };
+
   handleSurahSelection = (surah) => {
     const { qari, currentSurah } = this.props;
     const currenSurahId = currentSurah ? currentSurah.id : {};
@@ -35,10 +40,16 @@ class Qaris extends Component {
       this.props.load({ qari, surah });
     }
   }
+  handleRelated = () => {
+    this.setState({
+      toggleRelated: !this.state.toggleRelated
+    });
+  }
 
   render() {
-    const { surahs, qari, files, currentSurah, Playing, shouldContinuous} = this.props;
-
+    const { surahs, qari, files, currentSurah, Playing, shouldContinuous, related, qaris} = this.props;
+    const { toggleRelated} = this.state;
+    console.log(this.state);
     const handlePlayAll = () => {
       this.props.continuous();
       if (!shouldContinuous) {
@@ -47,6 +58,7 @@ class Qaris extends Component {
     };
 
     const description = qari.description ? qari.description : '';
+
     return (
       <div>
         <Helmet title={`Holy Quran recritation by ${qari.name}`} />
@@ -67,6 +79,15 @@ class Qaris extends Component {
                   >
                   <i className={`fa ${shouldContinuous ? 'fa-stop' : 'fa-play'} ${styles.icon}`} /><span>Play All</span>
                 </Button>
+                 {related && (
+                 <Button
+                  bsStyle="primary"
+                  className={`${styles.button} ${this.state.toggleRelated ? styles.playAllActive : ''}`}
+                  onClick={this.handleRelated}
+                  >
+                  <i className={`fa fa-sitemap ${styles.icon}`} /><span>{toggleRelated ? 'Hide Related' : 'Show Related'}</span>
+                </Button>)}
+               <Related related={related} qaris={qaris} toggle={toggleRelated}/>
               </div>
             </Col>
           </Row>
@@ -139,7 +160,9 @@ class Qaris extends Component {
 
 const connectedQaris = connect(
   (state, ownProps) => ({
+    related: state.related.qaris,
     surahs: state.surahs.entities,
+    qaris: state.qaris.entities,
     qari: state.qaris.entities[ownProps.params.id],
     files: state.files.entities[ownProps.params.id],
     Playing: state.audioplayer.isPlaying,
@@ -152,5 +175,10 @@ const connectedQaris = connect(
 export default asyncConnect([{
   promise({ params, store: { dispatch } }) {
     return dispatch(loadFiles(params.id));
+  }
+},
+{
+  promise({ params, store: { dispatch } }) {
+    return dispatch(loadRelated(params.id));
   }
 }])(connectedQaris);
